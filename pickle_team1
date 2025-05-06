@@ -1,0 +1,73 @@
+import pickle
+
+# --------- Data Models ---------
+# Class to represent customer information
+class Customer:
+    def __init__(self, customer_id, name, email, password, phone):
+        self.customer_id = customer_id
+        self.name = name
+        self.email = email
+        self.password = password
+        self.phone = phone
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
+# --------- Sample Data to be Pickled ---------
+# List of registered customers (pre-filled)
+customers = [
+    Customer(1, "Amna Ibrahim", "amna@gmail.com", "amna123", "1234567890"),
+    Customer(2, "Almaha Ibrahim", "almaha@gmail.com", "almaha123", "0987654321"),
+    Customer(3, "Salem Saeed", "salem@gmail.com", "salem123", "1122334455"),
+    Customer(4, "Shaikha Saleh", "shaika@gmail.com", "shaikha123", "6677889910"),
+
+]
+
+# Ticket sales record (date: tickets sold)
+tickets_sold = {
+    "2025-05-04": 10,
+    "2025-05-03": 5
+}
+
+# Discount flag (controlled by admin)
+discount_enabled = True
+
+# Available ticket types with their details
+tickets = [
+    {
+        "type": "Single Race Pass",
+        "price": 100,
+        "validity": "1 day",
+        "features": "Access to 1 race"
+    },
+    {
+        "type": "Weekend Package",
+        "price": 250,
+        "validity": "3 days",
+        "features": "All races + pit tour"
+    },
+    {
+        "type": "Group Discount",
+        "price": 80,
+        "validity": "1 day",
+        "features": "Minimum 5 people"
+    }
+]
+
+# Simple admin credentials
+admin_credentials = {
+    "admin": "admin123"
+}
+
+# --------- Bundle the Data ---------
+data = {
+    "customers": customers,
+    "tickets_sold": tickets_sold,
+    "discount_enabled": discount_enabled,
+    "tickets": tickets,
+    "admin_credentials": admin_credentials
+}
+
+# --------- Save to Pickle File ---------
+with open("ticket_data.pickle", "wb") as f:
+    pickle.dump(data, f)
