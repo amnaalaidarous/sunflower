@@ -1,0 +1,208 @@
+import tkinter as tk
+from tkinter import messagebox
+import pickle
+
+
+# --------- Load Data from Pickle File ---------
+def load_data():
+    try:
+        with open("ticket_data.pickle", "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        messagebox.showerror("Error", "Data file not found.")
+        return None
+
+# --------- Customer Class Model (Used for Loaded Customer Data) ---------
+class Customer:
+    def __init__(self, customer_id, name, email, password, phone):
+        self.customer_id = customer_id
+        self.name = name
+        self.email = email
+        self.password = password
+        self.phone = phone
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
+# --------- Load All Data from Pickle ---------
+data = load_data()
+if not data:
+    exit()  # Exit if no data was loaded
+
+# Extract components from loaded data
+customers = data["customers"]
+tickets_sold = data["tickets_sold"]
+discount_enabled = data["discount_enabled"]
+tickets = data["tickets"]
+admin_credentials = data["admin_credentials"]
+
+# --------- Utility: Return to Main Login Page ---------
+def go_home(win):
+    win.destroy()
+    show_login_page()
+
+# --------- Registration Page ---------
+def show_register_page():
+    # Clear previous widgets
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text="Register as Customer", font=("Arial", 16)).pack(pady=10)
+
+    # Input fields
+    name = tk.Entry(root)
+    email = tk.Entry(root)
+    password = tk.Entry(root, show="*")
+    phone = tk.Entry(root)
+
+    for label, entry in zip(["Name", "Email", "Password", "Phone"], [name, email, password, phone]):
+        tk.Label(root, text=label).pack()
+        entry.pack()
+
+    # Registration logic
+    def register():
+        new = Customer(len(customers) + 1, name.get(), email.get(), password.get(), phone.get())
+        customers.append(new)
+        messagebox.showinfo("Registered", "Account created! Please log in.")
+        show_login_page()
+
+    # Buttons
+    tk.Button(root, text="Register", command=register).pack(pady=10)
+    tk.Button(root, text="Back to Login", command=show_login_page).pack()
+
+# --------- Login Page (for Customers & Admins) ---------
+def show_login_page():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text="Login", font=("Arial", 16)).pack(pady=10)
+
+    role_var = tk.StringVar(value="Customer")
+    tk.OptionMenu(root, role_var, "Customer", "Admin").pack()
+
+    username = tk.Entry(root)
+    password = tk.Entry(root, show="*")
+
+    for label, entry in zip(["Email", "Password"], [username, password]):
+        tk.Label(root, text=label).pack()
+        entry.pack()
+
+    # Login logic
+    def login():
+        if role_var.get() == "Admin":
+            if admin_credentials.get(username.get()) == password.get():
+                show_admin_dashboard()
+            else:
+                messagebox.showerror("Login Failed", "Invalid admin credentials")
+        else:
+            for c in customers:
+                if c.email == username.get() and c.password == password.get():
+                    show_customer_home(c)
+                    return
+            messagebox.showerror("Login Failed", "Customer not found")
+
+    tk.Button(root, text="Login", command=login).pack(pady=5)
+    tk.Button(root, text="Register", command=show_register_page).pack()
+
+# --------- Customer Home Page ---------
+def show_customer_home(customer):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text=f"Welcome, {customer.name}", font=("Arial", 16)).pack(pady=10)
+
+    tk.Button(root, text="Account Management", width=30, command=lambda: open_account_management(customer)).pack(pady=5)
+    tk.Button(root, text="Ticket Purchasing Interface", width=30, command=lambda: open_ticket_interface(customer)).pack(pady=5)
+    tk.Button(root, text="Logout", width=30, command=show_login_page).pack(pady=20)
+
+# --------- Account Management Page ---------
+def open_account_management(customer):
+    win = tk.Toplevel()
+    win.title("Your Account")
+    win.geometry("300x250")  # Set smaller size for this window
+
+    # Show account info
+    tk.Label(win, text=f"Name: {customer.name}").pack()
+    tk.Label(win, text=f"Email: {customer.email}").pack()
+    tk.Label(win, text=f"Phone: {customer.phone}").pack()
+
+    # Delete account option
+    def delete_account():
+        if messagebox.askyesno("Delete", "Are you sure?"):
+            customers.remove(customer)
+            win.destroy()
+            show_login_page()
+
+    tk.Button(win, text="Delete Account", command=delete_account).pack(pady=5)
+    tk.Button(win, text="Back", command=lambda: go_home(win)).pack(pady=5)
+
+# --------- Ticket Purchase Interface ---------
+def open_ticket_interface(customer):
+    win = tk.Toplevel()
+    win.title("Tickets")
+    win.geometry("350x300")  # Set smaller size for this window
+
+    tk.Label(win, text="Select Ticket Types:", font=("Arial", 12)).pack(pady=5)
+
+    # Display all tickets with checkboxes
+    selected_vars = []
+    for ticket in tickets:
+        var = tk.IntVar()
+        info = f"{ticket['type']} | ${ticket['price']} | {ticket['validity']}\nFeatures: {ticket['features']}"
+        cb = tk.Checkbutton(win, text=info, variable=var, justify="left", anchor="w", wraplength=300, width=50)
+        cb.pack(pady=3)
+        selected_vars.append((var, ticket))
+
+    # Payment method dropdown
+    tk.Label(win, text="Payment Method:").pack()
+    pay_method = tk.StringVar(value="Credit Card")
+    tk.OptionMenu(win, pay_method, "Credit Card", "Debit Card").pack()
+
+    # Purchase logic
+    def purchase():
+        selected_tickets = [ticket for var, ticket in selected_vars if var.get()]
+        if not selected_tickets:
+            messagebox.showwarning("No Selection", "Please select at least one ticket.")
+            return
+
+        total = sum(t['price'] for t in selected_tickets)
+        if discount_enabled:
+            total *= 0.9  # Apply 10% discount
+
+        ticket_list = "\n".join(t['type'] for t in selected_tickets)
+        messagebox.showinfo("Purchase Successful", f"You purchased:\n{ticket_list}\nTotal: ${total:.2f}\nPayment: {pay_method.get()}")
+
+    tk.Button(win, text="Purchase Ticket(s)", command=purchase).pack(pady=10)
+    tk.Button(win, text="Back", command=lambda: go_home(win)).pack(pady=5)
+
+# --------- Admin Dashboard ---------
+def show_admin_dashboard():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text="Admin Dashboard", font=("Arial", 16)).pack(pady=10)
+
+    # Show ticket sales
+    tk.Label(root, text="Ticket Sales Per Day:").pack()
+    for date, count in tickets_sold.items():
+        tk.Label(root, text=f"{date}: {count} tickets").pack()
+
+    # Discount toggle
+    discount_status = tk.StringVar(value="Enabled" if discount_enabled else "Disabled")
+
+    def toggle_discount():
+        global discount_enabled
+        discount_enabled = not discount_enabled
+        discount_status.set("Enabled" if discount_enabled else "Disabled")
+
+    tk.Label(root, text="Discount Availability:").pack()
+    tk.Label(root, textvariable=discount_status, fg="blue").pack()
+    tk.Button(root, text="Toggle Discount", command=toggle_discount).pack(pady=5)
+    tk.Button(root, text="Logout", command=show_login_page).pack(pady=10)
+
+# --------- Main GUI Execution ---------
+root = tk.Tk()
+root.title("Race Ticketing System")
+root.geometry("400x350")  # Set the size for the main window
+show_login_page()
+root.mainloop()
