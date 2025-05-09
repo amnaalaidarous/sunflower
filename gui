@@ -207,7 +207,7 @@ def view_customer_histories():
     # --- Window setup ---
     win = tk.Toplevel()
     win.title("Customer Histories")
-    win.geometry("550x500")
+    win.geometry("500x600")
     win.configure(bg="#f0f0f0")
 
     # --- Display area ---
@@ -426,6 +426,7 @@ def show_admin_dashboard():
     search_entry = tk.Entry(root)
     search_entry.pack(pady=5)
     tk.Button(root, text="Search", command=search_customer).pack(pady=5)
+    root.geometry("500x600")
 
     # Logout button
     tk.Button(root, text="Logout", command=show_login_page).pack(pady=10)
