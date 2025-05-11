@@ -1,102 +1,144 @@
 # Importing datetime module to use date and time types
 
 
+
+
 from typing import List
 from datetime import datetime
 
 
+
+
 # Forward declaration of Order class (used before it's defined)
 class Order:
-   pass
+  pass
+
+
 
 
 # -------------------------
 # Base Class: User
 # -------------------------
 class User:
-   def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str):
-       self.__userID = userID                     # Private user ID
-       self.__name = name                         # Private user name
-       self.__email = email                       # Private user email
-       self.__password = password                 # Private password
-       self.__phoneNumber = phoneNumber           # Private phone number
-       self.__purchaseHistory = []                # Aggregation: List of Orders linked to user
+  def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str):
+      self.__userID = userID                     # Private user ID
+      self.__name = name                         # Private user name
+      self.__email = email                       # Private user email
+      self.__password = password                 # Private password
+      self.__phoneNumber = phoneNumber           # Private phone number
+      self.__purchaseHistory = []                # Aggregation: List of Orders linked to user
 
 
-   # Getter and setter for userID
-   def setUserID(self, userID: int):
-       self.__userID = userID
 
 
-   def getUserID(self) -> int:
-       return self.__userID
+  # Getter and setter for userID
+  def setUserID(self, userID: int):
+      self.__userID = userID
 
 
-   # Getter and setter for name
-   def setName(self, name: str):
-       self.__name = name
 
 
-   def getName(self) -> str:
-       return self.__name
+  def getUserID(self) -> int:
+      return self.__userID
 
 
-   # Getter and setter for email
-   def setEmail(self, email: str):
-       self.__email = email
 
 
-   def getEmail(self) -> str:
-       return self.__email
+  # Getter and setter for name
+  def setName(self, name: str):
+      self.__name = name
 
 
-   # Getter and setter for password
-   def setPassword(self, password: str):
-       self.__password = password
 
 
-   def getPassword(self) -> str:
-       return self.__password
+  def getName(self) -> str:
+      return self.__name
 
 
-   # Getter and setter for phoneNumber
-   def setPhoneNumber(self, phoneNumber: str):
-       self.__phoneNumber = phoneNumber
 
 
-   def getPhoneNumber(self) -> str:
-       return self.__phoneNumber
+  # Getter and setter for email
+  def setEmail(self, email: str):
+      self.__email = email
 
 
-   # Getter and setter for purchaseHistory
-   def setPurchaseHistory(self, purchaseHistory: List[Order]):
-       self.__purchaseHistory = purchaseHistory
 
 
-   def getPurchaseHistory(self) -> List[Order]:
-       return self.__purchaseHistory
+  def getEmail(self) -> str:
+      return self.__email
 
 
-   # Login method to validate credentials
-   def login(self, email: str, password: str) -> bool:
-       return self.__email == email and self.__password == password
 
 
-   # Dummy logout method (can be extended for session handling)
-   def logout(self):
-       print("User logged out.")
+  # Getter and setter for password
+  def setPassword(self, password: str):
+      self.__password = password
 
 
-   # Method to update user profile details
-   def updateProfile(self, name: str, email: str, phoneNumber: str):
-       self.__name = name
-       self.__email = email
-       self.__phoneNumber = phoneNumber
 
 
-   # Returns list of past orders
-   def viewPurchaseHistory(self) -> List[Order]:
-       return self.__purchaseHistory
+  def getPassword(self) -> str:
+      return self.__password
+
+
+
+
+  # Getter and setter for phoneNumber
+  def setPhoneNumber(self, phoneNumber: str):
+      self.__phoneNumber = phoneNumber
+
+
+
+
+  def getPhoneNumber(self) -> str:
+      return self.__phoneNumber
+
+
+
+
+  # Getter and setter for purchaseHistory
+  def setPurchaseHistory(self, purchaseHistory: List[Order]):
+      self.__purchaseHistory = purchaseHistory
+
+
+
+
+  def getPurchaseHistory(self) -> List[Order]:
+      return self.__purchaseHistory
+
+
+
+
+  # Login method to validate credentials
+  def login(self, email: str, password: str) -> bool:
+      return self.__email == email and self.__password == password
+
+
+
+
+  # Dummy logout method (can be extended for session handling)
+  def logout(self):
+      print("User logged out.")
+
+
+
+
+  # Method to update user profile details
+  def updateProfile(self, name: str, email: str, phoneNumber: str):
+      self.__name = name
+      self.__email = email
+      self.__phoneNumber = phoneNumber
+
+
+
+
+  # Returns list of past orders
+  def viewPurchaseHistory(self) -> List[Order]:
+      return self.__purchaseHistory
+
+
+
+
 
 
 
@@ -105,92 +147,128 @@ class User:
 # Subclass: Customer (inherits from User)
 # -------------------------
 class Customer(User):
-   def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str):
-       super().__init__(userID, name, email, password, phoneNumber)  # Inheritance from User
-       self.__loyaltyPoints = 0           # Private: points collected by customer
-       self.__membershipStatus = ""       # Private: e.g., Gold, Silver
-       self.__visitHistory = []           # Private: list of visits as strings
-       self.order = None                  # Unary relationship: customer has one order
+  def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str):
+      super().__init__(userID, name, email, password, phoneNumber)  # Inheritance from User
+      self.__loyaltyPoints = 0           # Private: points collected by customer
+      self.__membershipStatus = ""       # Private: e.g., Gold, Silver
+      self.__visitHistory = []           # Private: list of visits as strings
+      self.order = None                  # Unary relationship: customer has one order
 
 
-   # Getter and setter for loyaltyPoints
-   def setLoyaltyPoints(self, loyaltyPoints: int):
-       self.__loyaltyPoints = loyaltyPoints
 
 
-   def getLoyaltyPoints(self) -> int:
-       return self.__loyaltyPoints
+  # Getter and setter for loyaltyPoints
+  def setLoyaltyPoints(self, loyaltyPoints: int):
+      self.__loyaltyPoints = loyaltyPoints
 
 
-   # Getter and setter for membershipStatus
-   def setMembershipStatus(self, membershipStatus: str):
-       self.__membershipStatus = membershipStatus
 
 
-   def getMembershipStatus(self) -> str:
-       return self.__membershipStatus
+  def getLoyaltyPoints(self) -> int:
+      return self.__loyaltyPoints
 
 
-   # Getter and setter for visitHistory
-   def setVisitHistory(self, visitHistory: List[str]):
-       self.__visitHistory = visitHistory
 
 
-   def getVisitHistory(self) -> List[str]:
-       return self.__visitHistory
+  # Getter and setter for membershipStatus
+  def setMembershipStatus(self, membershipStatus: str):
+      self.__membershipStatus = membershipStatus
+
+
+
+
+  def getMembershipStatus(self) -> str:
+      return self.__membershipStatus
+
+
+
+
+  # Getter and setter for visitHistory
+  def setVisitHistory(self, visitHistory: List[str]):
+      self.__visitHistory = visitHistory
+
+
+
+
+  def getVisitHistory(self) -> List[str]:
+      return self.__visitHistory
 from datetime import datetime
 from typing import List
 
 
+
+
 # Forward declaration for Ticket and Payment used inside Order
 class Ticket:
-   pass
+  pass
+
+
 
 
 class Payment:
-   pass
+  pass
+
+
 
 
 # -------------------------
 # Subclass: Admin (inherits from User)
 # -------------------------
 class Admin(User):
-   def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str, adminID: int, role: str):
-       super().__init__(userID, name, email, password, phoneNumber)  # Inherit User constructor
-       self.__adminID = adminID        # Admin-specific ID
-       self.__role = role              # Admin's role (e.g., Sales Manager)
+  def __init__(self, userID: int, name: str, email: str, password: str, phoneNumber: str, adminID: int, role: str):
+      super().__init__(userID, name, email, password, phoneNumber)  # Inherit User constructor
+      self.__adminID = adminID        # Admin-specific ID
+      self.__role = role              # Admin's role (e.g., Sales Manager)
 
 
-   # Getter and setter for adminID
-   def setAdminID(self, adminID: int):
-       self.__adminID = adminID
 
 
-   def getAdminID(self) -> int:
-       return self.__adminID
+  # Getter and setter for adminID
+  def setAdminID(self, adminID: int):
+      self.__adminID = adminID
 
 
-   # Getter and setter for role
-   def setRole(self, role: str):
-       self.__role = role
 
 
-   def getRole(self) -> str:
-       return self.__role
+  def getAdminID(self) -> int:
+      return self.__adminID
 
 
-   # Business methods
-   def viewAllSales(self) -> float:
-       # Stub to simulate sales total
-       return 10000.0
 
 
-   def monitorCapacity(self, eventID: int) -> str:
-       return f"Monitoring event capacity for event {eventID}..."
+  # Getter and setter for role
+  def setRole(self, role: str):
+      self.__role = role
 
 
-   def generateSalesReport(self) -> str:
-       return "Sales report generated successfully."
+
+
+  def getRole(self) -> str:
+      return self.__role
+
+
+
+
+  # Business methods
+  def viewAllSales(self) -> float:
+      # Stub to simulate sales total
+      return 10000.0
+
+
+
+
+  def monitorCapacity(self, eventID: int) -> str:
+      return f"Monitoring event capacity for event {eventID}..."
+
+
+
+
+  def generateSalesReport(self) -> str:
+      return "Sales report generated successfully."
+
+
+
+
 
 
 
@@ -199,89 +277,125 @@ class Admin(User):
 # Class: Order
 # -------------------------
 class Order:
-   def __init__(self, orderID: int, user: User, orderDate: datetime):
-       self.__orderID = orderID                      # Unique order ID
-       self.__user = user                            # Binary relationship to User
-       self.__ticketList: List[Ticket] = []          # Aggregation: Order contains many tickets
-       self.__totalAmount = 0.0                      # Total order cost
-       self.__orderDate = orderDate                  # Date of order
-       self.__payment = None                         # Composition: Payment is part of Order
+  def __init__(self, orderID: int, user: User, orderDate: datetime):
+      self.__orderID = orderID                      # Unique order ID
+      self.__user = user                            # Binary relationship to User
+      self.__ticketList: List[Ticket] = []          # Aggregation: Order contains many tickets
+      self.__totalAmount = 0.0                      # Total order cost
+      self.__orderDate = orderDate                  # Date of order
+      self.__payment = None                         # Binary relationship: associated Payment object
 
 
-   # Getter and setter for orderID
-   def setOrderID(self, orderID: int):
-       self.__orderID = orderID
 
 
-   def getOrderID(self) -> int:
-       return self.__orderID
+  # Getter and setter for orderID
+  def setOrderID(self, orderID: int):
+      self.__orderID = orderID
 
 
-   # Getter and setter for user
-   def setUser(self, user: User):
-       self.__user = user
 
 
-   def getUser(self) -> User:
-       return self.__user
+  def getOrderID(self) -> int:
+      return self.__orderID
 
 
-   # Getter and setter for ticket list
-   def setTicketList(self, ticketList: List[Ticket]):
-       self.__ticketList = ticketList
 
 
-   def getTicketList(self) -> List[Ticket]:
-       return self.__ticketList
+  # Getter and setter for user
+  def setUser(self, user: User):
+      self.__user = user
 
 
-   # Getter and setter for total amount
-   def setTotalAmount(self, totalAmount: float):
-       self.__totalAmount = totalAmount
 
 
-   def getTotalAmount(self) -> float:
-       return self.__totalAmount
+  def getUser(self) -> User:
+      return self.__user
 
 
-   # Getter and setter for order date
-   def setOrderDate(self, orderDate: datetime):
-       self.__orderDate = orderDate
 
 
-   def getOrderDate(self) -> datetime:
-       return self.__orderDate
+  # Getter and setter for ticket list
+  def setTicketList(self, ticketList: List[Ticket]):
+      self.__ticketList = ticketList
 
 
-   # Getter and setter for payment (composition)
-   def setPayment(self, payment: Payment):
-       self.__payment = payment
 
 
-   def getPayment(self) -> Payment:
-       return self.__payment
+  def getTicketList(self) -> List[Ticket]:
+      return self.__ticketList
 
 
-   # Method to calculate the total amount based on ticket prices
-   def calculateTotalAmount(self) -> float:
-       total = sum(ticket.getPrice() for ticket in self.__ticketList)
-       self.__totalAmount = total
-       return total
 
 
-   # Method to add a ticket to the order
-   def addTicket(self, ticket: Ticket):
-       self.__ticketList.append(ticket)
+  # Getter and setter for total amount
+  def setTotalAmount(self, totalAmount: float):
+      self.__totalAmount = totalAmount
 
 
-   # Method to remove a ticket by ID
-   def removeTicket(self, ticketID: int):
-       self.__ticketList = [t for t in self.__ticketList if t.getTicketID() != ticketID]
 
 
-   # Returns a string receipt
-   def generateReceipt(self) -> str:
-       return f"Receipt for Order ID: {self.__orderID} - Total: ${self.__totalAmount}"
+  def getTotalAmount(self) -> float:
+      return self.__totalAmount
+
+
+
+
+  # Getter and setter for order date
+  def setOrderDate(self, orderDate: datetime):
+      self.__orderDate = orderDate
+
+
+
+
+  def getOrderDate(self) -> datetime:
+      return self.__orderDate
+
+
+
+
+  # Getter and setter for payment
+  def setPayment(self, payment: Payment):
+      self.__payment = payment
+
+
+
+
+  def getPayment(self) -> Payment:
+      return self.__payment
+
+
+
+
+  # Method to calculate the total amount based on ticket prices
+  def calculateTotalAmount(self) -> float:
+      total = sum(ticket.getPrice() for ticket in self.__ticketList)
+      self.__totalAmount = total
+      return total
+
+
+
+
+  # Method to add a ticket to the order
+  def addTicket(self, ticket: Ticket):
+      self.__ticketList.append(ticket)
+
+
+
+
+  # Method to remove a ticket by ID
+  def removeTicket(self, ticketID: int):
+      self.__ticketList = [t for t in self.__ticketList if t.getTicketID() != ticketID]
+
+
+
+
+  # Returns a string receipt
+  def generateReceipt(self) -> str:
+      return f"Receipt for Order ID: {self.__orderID} - Total: ${self.__totalAmount}"
+
+
+
+
 
 
 
@@ -290,58 +404,182 @@ class Order:
 # Class: Payment (Base Class)
 # -------------------------
 class Payment:
-   def __init__(self, paymentID: int, amount: float, paymentDate: datetime, status: str):
-       self._paymentID = paymentID            # Protected attribute
-       self._amount = amount
-       self._paymentDate = paymentDate
-       self._status = status
+  def __init__(self, paymentID: int, amount: float, paymentDate: datetime, status: str):
+      self._paymentID = paymentID            # Protected attribute
+      self._amount = amount
+      self._paymentDate = paymentDate
+      self._status = status
 
 
-   def setPaymentID(self, paymentID: int):
-       self._paymentID = paymentID
 
 
-   def getPaymentID(self) -> int:
-       return self._paymentID
+  def setPaymentID(self, paymentID: int):
+      self._paymentID = paymentID
 
 
-   def setAmount(self, amount: float):
-       self._amount = amount
 
 
-   def getAmount(self) -> float:
-       return self._amount
+  def getPaymentID(self) -> int:
+      return self._paymentID
 
 
-   def setPaymentDate(self, paymentDate: datetime):
-       self._paymentDate = paymentDate
 
 
-   def getPaymentDate(self) -> datetime:
-       return self._paymentDate
+  def setAmount(self, amount: float):
+      self._amount = amount
 
 
-   def setStatus(self, status: str):
-       self._status = status
 
 
-   def getStatus(self) -> str:
-       return self._status
+  def getAmount(self) -> float:
+      return self._amount
 
 
-   def processPayment(self) -> bool:
-       # Stub for payment processing logic
-       self._status = "Completed"
-       return True
 
 
-   def isPaymentSuccessful(self) -> bool:
-       return self._status == "Completed"
-# Part 3: Ticket subclasses, RaceEvent class, and all remaining relationships with detailed comments
+  def setPaymentDate(self, paymentDate: datetime):
+      self._paymentDate = paymentDate
 
 
-from datetime import datetime
-from typing import List
+
+
+  def getPaymentDate(self) -> datetime:
+      return self._paymentDate
+
+
+
+
+  def setStatus(self, status: str):
+      self._status = status
+
+
+
+
+  def getStatus(self) -> str:
+      return self._status
+
+
+
+
+  def processPayment(self) -> bool:
+      # Stub for payment processing logic
+      self._status = "Completed"
+      return True
+
+
+
+
+  def isPaymentSuccessful(self) -> bool:
+      return self._status == "Completed"
+
+
+
+
+# -------------------------
+# Subclass: CreditCard (inherits from Payment)
+# -------------------------
+class CreditCard(Payment):
+   def __init__(self, paymentID: int, amount: float, paymentDate: datetime, status: str,
+                cardNumber: str, cardHolderName: str, expirationDate: str, cvv: str):
+       super().__init__(paymentID, amount, paymentDate, status)  # Call base Payment constructor
+       self.__cardNumber = cardNumber              # Private card number
+       self.__cardHolderName = cardHolderName      # Private card holder name
+       self.__expirationDate = expirationDate      # Private expiration date
+       self.__cvv = cvv                             # Private CVV code
+
+
+   # Setter and getter for cardNumber
+   def setCardNumber(self, cardNumber: str):
+       self.__cardNumber = cardNumber
+
+
+   def getCardNumber(self) -> str:
+       return self.__cardNumber
+
+
+   # Setter and getter for cardHolderName
+   def setCardHolderName(self, cardHolderName: str):
+       self.__cardHolderName = cardHolderName
+
+
+   def getCardHolderName(self) -> str:
+       return self.__cardHolderName
+
+
+   # Setter and getter for expirationDate
+   def setExpirationDate(self, expirationDate: str):
+       self.__expirationDate = expirationDate
+
+
+   def getExpirationDate(self) -> str:
+       return self.__expirationDate
+
+
+   # Setter and getter for CVV
+   def setCVV(self, cvv: str):
+       self.__cvv = cvv
+
+
+   def getCVV(self) -> str:
+       return self.__cvv
+
+
+
+
+# -------------------------
+# Subclass: DigitalWallet (inherits from Payment)
+# -------------------------
+class DigitalWallet(Payment):
+   def __init__(self, paymentID: int, amount: float, paymentDate: datetime, status: str,
+                walletProvider: str, walletEmail: str):
+       super().__init__(paymentID, amount, paymentDate, status)  # Call base Payment constructor
+       self.__walletProvider = walletProvider      # Private wallet provider name (e.g., PayPal)
+       self.__walletEmail = walletEmail            # Private email linked to the wallet
+
+
+   # Setter and getter for walletProvider
+   def setWalletProvider(self, walletProvider: str):
+       self.__walletProvider = walletProvider
+
+
+   def getWalletProvider(self) -> str:
+       return self.__walletProvider
+
+
+   # Setter and getter for walletEmail
+   def setWalletEmail(self, walletEmail: str):
+       self.__walletEmail = walletEmail
+
+
+   def getWalletEmail(self) -> str:
+       return self.__walletEmail
+
+
+
+
+# -------------------------
+# Subclass: Cash (inherits from Payment)
+# -------------------------
+class Cash(Payment):
+   def __init__(self, paymentID: int, amount: float, paymentDate: datetime, status: str,
+                receivedBy: str):
+       super().__init__(paymentID, amount, paymentDate, status)  # Call base Payment constructor
+       self.__receivedBy = receivedBy            # Private name of cashier/staff receiving payment
+
+
+   # Setter and getter for receivedBy
+   def setReceivedBy(self, receivedBy: str):
+       self.__receivedBy = receivedBy
+
+
+   def getReceivedBy(self) -> str:
+       return self.__receivedBy
+
+
+
+
+
+
 
 
 
@@ -350,85 +588,135 @@ from typing import List
 # Base Class: Ticket
 # -------------------------
 class Ticket:
-   def __init__(self, ticketID: int, price: float, eventID: int):
-       self._ticketID = ticketID           # Ticket unique identifier
-       self._price = price                 # Ticket price
-       self._eventID = eventID             # Associated RaceEvent ID (used for composition)
+  def __init__(self, ticketID: int, price: float, eventID: int):
+      self._ticketID = ticketID           # Ticket unique identifier
+      self._price = price                 # Ticket price
+      self._eventID = eventID             # Associated RaceEvent ID (used for composition)
 
 
-   def setTicketID(self, ticketID: int):
-       self._ticketID = ticketID
 
 
-   def getTicketID(self) -> int:
-       return self._ticketID
+  def setTicketID(self, ticketID: int):
+      self._ticketID = ticketID
 
 
-   def setPrice(self, price: float):
-       self._price = price
 
 
-   def getPrice(self) -> float:
-       return self._price
+  def getTicketID(self) -> int:
+      return self._ticketID
 
 
-   def setEventID(self, eventID: int):
-       self._eventID = eventID
 
 
-   def getEventID(self) -> int:
-       return self._eventID
+  def setPrice(self, price: float):
+      self._price = price
+
+
+
+
+  def getPrice(self) -> float:
+      return self._price
+
+
+
+
+  def setEventID(self, eventID: int):
+      self._eventID = eventID
+
+
+
+
+  def getEventID(self) -> int:
+      return self._eventID
+
+
 
 
 
 
 # -------------------------
-# Subclasses: Ticket Variants
+# Subclasses: Ticket Variants (with full getter and setter methods)
 # -------------------------
+
+
 class GroupTicket(Ticket):
    def __init__(self, ticketID: int, price: float, eventID: int, groupSize: int):
-       super().__init__(ticketID, price, eventID)
-       self.groupSize = groupSize
+       super().__init__(ticketID, price, eventID)     # Call base class constructor
+       self.__groupSize = groupSize                   # Private attribute: group size
+
+
+   def setGroupSize(self, groupSize: int):
+       self.__groupSize = groupSize                   # Set group size
+
+
+   def getGroupSize(self) -> int:
+       return self.__groupSize                        # Return group size
 
 
    def getGroupDiscount(self) -> float:
-       return self.getPrice() * 0.10 if self.groupSize >= 5 else 0.0
+       # Returns 10% discount if group size >= 5
+       return self.getPrice() * 0.10 if self.__groupSize >= 5 else 0.0
 
 
 
 
 class SeasonMembership(Ticket):
    def __init__(self, ticketID: int, price: float, eventID: int, seasonYear: int):
-       super().__init__(ticketID, price, eventID)
-       self.seasonYear = seasonYear
+       super().__init__(ticketID, price, eventID)     # Call base class constructor
+       self.__seasonYear = seasonYear                 # Private attribute: year of membership
+
+
+   def setSeasonYear(self, seasonYear: int):
+       self.__seasonYear = seasonYear                 # Set season year
+
+
+   def getSeasonYear(self) -> int:
+       return self.__seasonYear                       # Return season year
 
 
    def getAccessLevel(self) -> str:
-       return "Full Access"
+       return "Full Access"                           # All season memberships have full access
 
 
 
 
 class WeekendPackage(Ticket):
    def __init__(self, ticketID: int, price: float, eventID: int, includesCamping: bool):
-       super().__init__(ticketID, price, eventID)
-       self.includesCamping = includesCamping
+       super().__init__(ticketID, price, eventID)     # Call base class constructor
+       self.__includesCamping = includesCamping       # Private attribute: camping option
+
+
+   def setIncludesCamping(self, includesCamping: bool):
+       self.__includesCamping = includesCamping       # Set whether camping is included
+
+
+   def getIncludesCamping(self) -> bool:
+       return self.__includesCamping                  # Return camping option status
 
 
    def getPerks(self) -> List[str]:
-       return ["VIP Lounge", "Free Drinks"] if self.includesCamping else ["Free Drinks"]
+       # Return perks depending on camping inclusion
+       return ["VIP Lounge", "Free Drinks"] if self.__includesCamping else ["Free Drinks"]
 
 
 
 
 class SingleRaceEvent(Ticket):
    def __init__(self, ticketID: int, price: float, eventID: int, raceName: str):
-       super().__init__(ticketID, price, eventID)
-       self.raceName = raceName
+       super().__init__(ticketID, price, eventID)     # Call base class constructor
+       self.__raceName = raceName                     # Private attribute: race name
+
+
+   def setRaceName(self, raceName: str):
+       self.__raceName = raceName                     # Set race name
+
+
+   def getRaceName(self) -> str:
+       return self.__raceName                         # Return race name
 
 
    def getRaceInfo(self) -> str:
-       return f"Single entry to race: {self.raceName}"
+       return f"Single entry to race: {self.__raceName}"  # Info about the race
 
 
 
@@ -439,69 +727,97 @@ class SingleRaceEvent(Ticket):
 # Aggregation: RaceEvent has a User (organizer)
 # -------------------------
 class RaceEvent:
-   def __init__(self, eventID: int, title: str, date: datetime, location: str, user: User):
-       self.__eventID = eventID                   # Unique event ID
-       self.__title = title                       # Event title
-       self.__date = date                         # Event date
-       self.__location = location                 # Event location
-       self.__user = user                         # Aggregation: User organizes the event
-       self.__tickets: List[Ticket] = []          # Composition: Tickets belong to this event
+  def __init__(self, eventID: int, title: str, date: datetime, location: str, user: User):
+      self.__eventID = eventID                   # Unique event ID
+      self.__title = title                       # Event title
+      self.__date = date                         # Event date
+      self.__location = location                 # Event location
+      self.__user = user                         # Aggregation: User organizes the event
+      self.__tickets: List[Ticket] = []          # Composition: Tickets belong to this event
 
 
-   def setEventID(self, eventID: int):
-       self.__eventID = eventID
 
 
-   def getEventID(self) -> int:
-       return self.__eventID
+  def setEventID(self, eventID: int):
+      self.__eventID = eventID
 
 
-   def setTitle(self, title: str):
-       self.__title = title
 
 
-   def getTitle(self) -> str:
-       return self.__title
+  def getEventID(self) -> int:
+      return self.__eventID
 
 
-   def setDate(self, date: datetime):
-       self.__date = date
 
 
-   def getDate(self) -> datetime:
-       return self.__date
+  def setTitle(self, title: str):
+      self.__title = title
 
 
-   def setLocation(self, location: str):
-       self.__location = location
 
 
-   def getLocation(self) -> str:
-       return self.__location
+  def getTitle(self) -> str:
+      return self.__title
 
 
-   def setUser(self, user: User):
-       self.__user = user
 
 
-   def getUser(self) -> User:
-       return self.__user
+  def setDate(self, date: datetime):
+      self.__date = date
 
 
-   def createTicket(self, details):
-       ticket = Ticket(details)  # Ticket is created *inside* the class
-       self.__tickets.append(ticket)
 
 
-   def removeTicket(self, ticketID: int):
-       self.__tickets = [t for t in self.__tickets if t.getTicketID() != ticketID]
+  def getDate(self) -> datetime:
+      return self.__date
 
 
-   def getTickets(self) -> List[Ticket]:
-       return self.__tickets
 
 
-   def cancelEvent(self):
-       # Composition: Cancelling event removes all related tickets
-       self.__tickets.clear()
-       return f"RaceEvent '{self.__title}' cancelled. All tickets void."
+  def setLocation(self, location: str):
+      self.__location = location
+
+
+
+
+  def getLocation(self) -> str:
+      return self.__location
+
+
+
+
+  def setUser(self, user: User):
+      self.__user = user
+
+
+
+
+  def getUser(self) -> User:
+      return self.__user
+
+
+     
+      # Composition
+  def createTicket(self, details):
+      ticket = Ticket(details)  # Ticket is created *inside* the class
+      self.__tickets.append(ticket)
+
+
+
+
+  def removeTicket(self, ticketID: int):
+      self.__tickets = [t for t in self.__tickets if t.getTicketID() != ticketID]
+
+
+
+
+  def getTickets(self) -> List[Ticket]:
+      return self.__tickets
+
+
+
+
+  def cancelEvent(self):
+      # Composition: Cancelling event removes all related tickets
+      self.__tickets.clear()
+      return f"RaceEvent '{self.__title}' cancelled. All tickets void."
