@@ -1,0 +1,440 @@
+import tkinter as tk
+from tkinter import messagebox
+import pickle
+
+# Load data from a pickle file
+def load_data():
+    try:
+        # Try loading the data from 'ticket_data.pickle' file
+        with open("ticket_data.pickle", "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        # If file is not found, show an error message
+        messagebox.showerror("Error", "Data file not found.")
+        return None
+
+
+# Customer model to store user data
+class Customer:
+    def __init__(self, customer_id, name, email, password, phone):
+        # Initialize customer details
+        self.customer_id = customer_id
+        self.name = name
+        self.email = email
+        self.password = password
+        self.phone = phone
+
+    def __str__(self):
+        # Return a string representation of the customer
+        return f"{self.name} ({self.email})"
+
+
+# Load application data
+data = load_data()
+if not data:
+    # Exit if data loading failed
+    exit()
+
+# Unpack data from pickle file
+customers = data["customers"]
+tickets_sold = data["tickets_sold"]
+discount_enabled = data["discount_enabled"]
+tickets = data["tickets"]
+admin_credentials = data["admin_credentials"]
+purchase_history = data["purchase_history"]
+
+
+# Navigate to login page
+def go_home(win):
+    win.destroy()  # Destroy the current window
+    show_login_page()  # Show the login page
+
+
+# Registration interface for new customers
+def show_register_page():
+    # Clear the current window
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    # Show register page heading
+    tk.Label(root, text="Register as Customer", font=("Arial", 16)).pack(pady=10)
+
+    # Create input fields for registration
+    name = tk.Entry(root)
+    email = tk.Entry(root)
+    password = tk.Entry(root, show="*")
+    phone = tk.Entry(root)
+
+    # Label and input field for each customer detail
+    for label, entry in zip(["Name", "Email", "Password", "Phone"], [name, email, password, phone]):
+        tk.Label(root, text=label).pack()
+        entry.pack()
+
+    # Clear input fields
+    def clear_fields():
+        name.delete(0, tk.END)
+        email.delete(0, tk.END)
+        password.delete(0, tk.END)
+        phone.delete(0, tk.END)
+
+    # Register user with input validation
+    def register():
+        try:
+            # Ensure all fields are filled
+            if not all([name.get(), email.get(), password.get(), phone.get()]):
+                raise ValueError("All fields are required.")
+
+            # Create new customer and add to customer list
+            new = Customer(len(customers) + 1, name.get(), email.get(), password.get(), phone.get())
+            customers.append(new)
+            messagebox.showinfo("Registered", "Account created! Please log in.")
+            show_login_page()  # Return to login page after registration
+        except ValueError as ve:
+            messagebox.showerror("Input Error", str(ve))  # Handle input error
+        except Exception as e:
+            messagebox.showerror("Unexpected Error", f"An error occurred: {str(e)}")  # Handle unexpected error
+
+    # Register button
+    tk.Button(root, text="Register", command=register).pack(pady=5)
+    # Clear button
+    tk.Button(root, text="Clear", command=clear_fields).pack(pady=2)
+    # Back to login button
+    tk.Button(root, text="Back to Login", command=show_login_page).pack(pady=5)
+
+
+# Login interface for customers and admins
+def show_login_page():
+    for widget in root.winfo_children():
+        widget.destroy()  # Clear the window
+
+    tk.Label(root, text="Login", font=("Arial", 16)).pack(pady=10)
+
+    # Role selection (Customer or Admin)
+    role_var = tk.StringVar(value="Customer")
+    tk.OptionMenu(root, role_var, "Customer", "Admin").pack()
+
+    # Input fields for username and password
+    username = tk.Entry(root)
+    password = tk.Entry(root, show="*")
+
+    # Labels and input fields for login
+    for label, entry in zip(["Email", "Password"], [username, password]):
+        tk.Label(root, text=label).pack()
+        entry.pack()
+
+    # Clear input fields
+    def clear_fields():
+        username.delete(0, tk.END)
+        password.delete(0, tk.END)
+
+    # Login action (Admin or Customer)
+    def login():
+        if role_var.get() == "Admin":
+            # Admin login check
+            if admin_credentials.get(username.get()) == password.get():
+                show_admin_dashboard()  # Show admin dashboard on successful login
+            else:
+                messagebox.showerror("Login Failed", "Invalid admin credentials")
+        else:
+            # Customer login check
+            for c in customers:
+                if c.email == username.get() and c.password == password.get():
+                    show_customer_home(c)  # Show customer home page on successful login
+                    return
+            messagebox.showerror("Login Failed", "Customer not found")
+
+    # Login button
+    tk.Button(root, text="Login", command=login).pack(pady=5)
+    # Clear button
+    tk.Button(root, text="Clear", command=clear_fields).pack(pady=2)
+    # Register button
+    tk.Button(root, text="Register", command=show_register_page).pack(pady=5)
+
+
+# Customer main menu
+def show_customer_home(customer):
+    # Clear the window
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    # Display customer name
+    tk.Label(root, text=f"Welcome, {customer.name}", font=("Arial", 16)).pack(pady=10)
+
+    # Buttons for account management and ticket purchasing
+    tk.Button(root, text="Account Management", width=30, command=lambda: open_account_management(customer)).pack(pady=5)
+    tk.Button(root, text="Ticket Purchasing Interface", width=30, command=lambda: open_ticket_interface(customer)).pack(
+        pady=5)
+    tk.Button(root, text="Logout", width=30, command=show_login_page).pack(pady=20)
+
+
+# Return to customer's homepage from a popup window
+def go_back_to_customer_home(win, customer):
+    win.destroy()  # Destroy current window
+    show_customer_home(customer)  # Show the customer home page
+
+#View details and history of Customers
+def view_customer_histories():
+    def show_all_histories():
+        clear_frame()
+
+        if not purchase_history:
+            tk.Label(win, text="No tickets have been sold yet.", font=("Arial", 12)).pack(pady=10)
+            return
+
+        for record in purchase_history:
+            customer_id = record.get("customer_id")
+            ticket_type = record.get("ticket_type")
+            purchase_time = record.get("purchase_time")
+
+            customer = next((c for c in customers if c.customer_id == customer_id), None)
+
+            if customer:
+                info = f"Name: {customer.name}\n" \
+                       f"Email: {customer.email}\n" \
+                       f"Phone: {customer.phone}\n" \
+                       f"Ticket: {ticket_type}\n" \
+                       f"Purchased: {purchase_time}\n"
+                tk.Label(win, text=info, anchor="w", justify="left", wraplength=450, bg="white").pack(pady=5, fill="x", padx=10)
+
+    def clear_frame():
+        for widget in content_frame.winfo_children():
+            widget.destroy()
+
+    def go_back():
+        win.destroy()
+        show_admin_homepage()
+
+    # --- Window setup ---
+    win = tk.Toplevel()
+    win.title("Customer Histories")
+    win.geometry("500x600")
+    win.configure(bg="#f0f0f0")
+
+    # --- Display area ---
+    content_frame = tk.Frame(win, bg="#f0f0f0")
+    content_frame.pack(fill="both", expand=True)
+
+    # --- Back Button ---
+    tk.Button(win, text="Back", command=go_back, bg="#cccccc").pack(pady=10)
+
+    show_all_histories()
+
+
+# Account management window (view/edit/delete account)
+def open_account_management(customer):
+    win = tk.Toplevel()  # Create new top-level window
+    win.title("Your Account")
+    win.geometry("300x350")
+
+    # Display customer details
+    tk.Label(win, text=f"Name: {customer.name}").pack()
+    tk.Label(win, text=f"Email: {customer.email}").pack()
+    tk.Label(win, text=f"Phone: {customer.phone}").pack()
+
+    # Edit functionality (making details editable)
+    def enable_editing():
+        # Hide current details and show editable fields
+        for widget in win.winfo_children():
+            widget.pack_forget()
+
+        tk.Label(win, text="Edit Details").pack(pady=10)
+
+        name_entry = tk.Entry(win)
+        name_entry.insert(0, customer.name)
+        name_entry.pack(pady=5)
+
+        email_entry = tk.Entry(win)
+        email_entry.insert(0, customer.email)
+        email_entry.pack(pady=5)
+
+        phone_entry = tk.Entry(win)
+        phone_entry.insert(0, customer.phone)
+        phone_entry.pack(pady=5)
+
+        password_entry = tk.Entry(win, show="*")
+        password_entry.insert(0, customer.password)
+        password_entry.pack(pady=5)
+
+        # Save updated details
+        def save_edits():
+            try:
+                # Update customer details with new values
+                customer.name = name_entry.get()
+                customer.email = email_entry.get()
+                customer.phone = phone_entry.get()
+                customer.password = password_entry.get()
+
+                messagebox.showinfo("Success", "Account details updated successfully.")
+                win.destroy()  # Close edit window and return to account view
+                open_account_management(customer)  # Reload account management page with updated info
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save updates: {str(e)}")
+
+        # Save button
+        tk.Button(win, text="Save Changes", command=save_edits).pack(pady=5)
+
+        # Cancel button to go back to view mode
+        def cancel_edit():
+            open_account_management(customer)  # Return to original account view without changes
+
+        tk.Button(win, text="Cancel", command=cancel_edit).pack(pady=5)
+
+    # Edit button to enable editing mode
+    tk.Button(win, text="Edit Account", command=enable_editing).pack(pady=10)
+
+    # Delete account action
+    def delete_account():
+        if messagebox.askyesno("Delete", "Are you sure?"):
+            customers.remove(customer)  # Remove customer from list
+            win.destroy()  # Close the account management window
+            show_login_page()  # Return to login page after deletion
+
+    # Delete account button
+    tk.Button(win, text="Delete Account", command=delete_account).pack(pady=5)
+    # Back button
+    tk.Button(win, text="Back", command=lambda: go_back_to_customer_home(win, customer)).pack(pady=5)
+
+
+# Ticket purchasing window with card details verification for both Credit and Debit Cards
+def open_ticket_interface(customer):
+    win = tk.Toplevel()  # Create new top-level window
+    win.title("Tickets")
+    win.geometry("370x370")
+
+    tk.Label(win, text="Select Ticket Types:", font=("Arial", 12)).pack(pady=5)
+
+    selected_vars = []
+    for ticket in tickets:
+        var = tk.IntVar()
+        info = f"{ticket['type']} | ${ticket['price']} | {ticket['validity']}\nFeatures: {ticket['features']}"
+        cb = tk.Checkbutton(win, text=info, variable=var, justify="left", anchor="w", wraplength=300, width=50)
+        cb.pack(pady=3)
+        selected_vars.append((var, ticket))
+
+    tk.Label(win, text="Payment Method:").pack()
+    pay_method = tk.StringVar(value="Credit Card")
+    pay_method_menu = tk.OptionMenu(win, pay_method, "Credit Card", "Debit Card", "Cash")
+    pay_method_menu.pack()
+
+    # Fields for card details (initially hidden)
+    card_number_entry = tk.Entry(win, show="*")
+    card_expiry_entry = tk.Entry(win, show="*")
+    card_cvv_entry = tk.Entry(win, show="*")
+    card_number_label = tk.Label(win, text="Card Number (16 digits):")
+    card_expiry_label = tk.Label(win, text="Expiration Date (MM/YY):")
+    card_cvv_label = tk.Label(win, text="CVV (3 digits):")
+
+    # Hide card fields initially
+    def update_payment_fields(*args):
+        if pay_method.get() in ["Credit Card", "Debit Card"]:
+            card_number_label.pack()
+            card_number_entry.pack(pady=5)
+            card_expiry_label.pack()
+            card_expiry_entry.pack(pady=5)
+            card_cvv_label.pack()
+            card_cvv_entry.pack(pady=5)
+        else:
+            card_number_label.pack_forget()
+            card_number_entry.pack_forget()
+            card_expiry_label.pack_forget()
+            card_expiry_entry.pack_forget()
+            card_cvv_label.pack_forget()
+            card_cvv_entry.pack_forget()
+
+    pay_method.trace("w", update_payment_fields)  # Call update when payment method changes
+
+    def purchase():
+        try:
+            # Select the tickets the user wants to purchase
+            selected_tickets = [ticket for var, ticket in selected_vars if var.get()]
+            if not selected_tickets:
+                raise ValueError("Please select at least one ticket.")
+
+            total = sum(t['price'] for t in selected_tickets)
+            if discount_enabled:
+                total *= 0.9
+
+            if pay_method.get() in ["Credit Card", "Debit Card"]:
+                # Validate card details (both for Credit and Debit Cards)
+                card_number = card_number_entry.get()
+                expiry_date = card_expiry_entry.get()
+                cvv = card_cvv_entry.get()
+
+                if not card_number.isdigit() or len(card_number) != 16:
+                    raise ValueError("Invalid card number. It must be 16 digits.")
+                if not expiry_date or len(expiry_date.split("/")) != 2 or len(expiry_date.split("/")[0]) != 2 or len(expiry_date.split("/")[1]) != 2:
+                    raise ValueError("Invalid expiration date. Format should be MM/YY.")
+                if not cvv.isdigit() or len(cvv) != 3:
+                    raise ValueError("Invalid CVV. It must be 3 digits.")
+
+            ticket_list = "\n".join(t['type'] for t in selected_tickets)
+            messagebox.showinfo("Purchase Successful", f"You purchased:\n{ticket_list}\nTotal: ${total:.2f}\nPayment: {pay_method.get()}")
+        except ValueError as ve:
+            messagebox.showwarning("Warning", str(ve))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to complete purchase.\n{str(e)}")
+
+    tk.Button(win, text="Purchase Ticket(s)", command=purchase).pack(pady=10)
+    tk.Button(win, text="Back", command=lambda: go_back_to_customer_home(win, customer)).pack(pady=5)
+
+    update_payment_fields()  # Initially update the payment fields based on the selected payment method
+
+# Admin dashboard to monitor sales, discounts, and customers
+def show_admin_dashboard():
+    # Clear the window
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text="Admin Dashboard", font=("Arial", 16)).pack(pady=10)
+    tk.Button(root, text="View Customer History", width=30, command=view_customer_histories).pack(pady=5)
+
+    # Display ticket sales per day
+    tk.Label(root, text="Ticket Sales Per Day:").pack()
+    for date, count in tickets_sold.items():
+        tk.Label(root, text=f"{date}: {count} tickets").pack()
+
+    # Display discount status and allow toggling
+    discount_status = tk.StringVar(value="Enabled" if discount_enabled else "Disabled")
+
+    def toggle_discount():
+        global discount_enabled
+        discount_enabled = not discount_enabled
+        discount_status.set("Enabled" if discount_enabled else "Disabled")
+
+    tk.Label(root, text="Discount Availability:").pack()
+    tk.Label(root, textvariable=discount_status, fg="blue").pack()
+    tk.Button(root, text="Toggle Discount", command=toggle_discount).pack(pady=5)
+
+    # Display customer list
+    tk.Label(root, text="Customer List:", font=("Arial", 14)).pack(pady=10)
+
+    customer_listbox = tk.Listbox(root, width=50, height=10)
+    for customer in customers:
+        customer_listbox.insert(tk.END, f"{customer.name} ({customer.email})")
+    customer_listbox.pack()
+
+    # Search functionality to filter customer list
+    def search_customer():
+        query = search_entry.get().lower()
+        customer_listbox.delete(0, tk.END)
+        for customer in customers:
+            if query in customer.name.lower() or query in customer.email.lower():
+                customer_listbox.insert(tk.END, f"{customer.name} ({customer.email})")
+
+    # Search input and button
+    tk.Label(root, text="Search by Name or Email:").pack(pady=5)
+    search_entry = tk.Entry(root)
+    search_entry.pack(pady=5)
+    tk.Button(root, text="Search", command=search_customer).pack(pady=5)
+    root.geometry("500x600")
+
+    # Logout button
+    tk.Button(root, text="Logout", command=show_login_page).pack(pady=10)
+
+
+# Initialize main app window
+root = tk.Tk()
+root.title("Race Ticketing System")
+root.geometry("400x370")
+show_login_page()  # Show the login page initially
+root.mainloop()
